@@ -1,0 +1,21 @@
+@lexer{
+NUMBER : "[0-9]";
+OP : "\+|-|\*";
+WS : "[ \r\t\n]" -> skip;
+}
+@define{
+l $[int res;]$;
+t $[int val; int res;]$;
+g $[int val1; int val2; int res;]$;
+}
+@rules{
+l -> NUMBER ${ _2.val = Integer.parseInt(_1.text); }$
+	 t      ${ _0.res = _2.res; }$ ;
+t -> l  ${ _2.val1 = _0.val; _2.val2 = _1.res; }$
+     g  ${ _3.val = _2.res; }$
+     t  ${ _0.res = _3.res; }$;
+t ->    ${ _0.res = _0.val; }$;
+g -> OP ${ if (_1.text.equals("+")) _0.res = _0.val1 + _0.val2;
+           if (_1.text.equals("-")) _0.res = _0.val1 - _0.val2;
+           if (_1.text.equals("*")) _0.res = _0.val1 * _0.val2; }$ ;
+}

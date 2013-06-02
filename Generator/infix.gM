@@ -1,0 +1,25 @@
+@lexer{
+NUMBER : "[0-9]+";
+PLUS : "\+";
+MUL : "\*";
+LB : "\(";
+RB : "\)";
+WS : "[ \t\r\n]" -> skip;
+}
+@define{
+e $[int res;]$;
+es $[int res;]$;
+f $[int res;]$;
+fs $[int res;]$;
+num $[int res;]$;
+}
+@rules{
+e -> f es  ${ _0.res = _1.res + _2.res; }$ ;
+es -> PLUS f es ${_0.res = _2.res + _3.res;}$ ;
+es -> ${_0.res = 0;}$;
+f -> num fs  ${ _0.res = _1.res * _2.res; }$ ;
+fs -> MUL num fs ${_0.res = _2.res * _3.res;}$ ;
+fs -> ${_0.res = 1;}$;
+num -> NUMBER ${_0.res = Integer.parseInt(_1.text); }$;
+num -> LB e RB ${_0.res = _2.res; }$; 
+}
